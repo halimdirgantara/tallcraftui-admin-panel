@@ -1,40 +1,40 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - @yield('title', 'Authentication')</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Styles / Scripts -->
+    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen">
-    <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="w-full max-w-md">
-            <!-- Logo/Brand -->
-            <div class="text-center mb-8">
-                <h1 class="text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
+<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Logo -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
                     {{ config('app.name', 'Laravel') }}
                 </h1>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mt-2">
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     @yield('subtitle', 'Welcome back')
                 </p>
             </div>
 
             <!-- Auth Card -->
-            <div class="bg-white dark:bg-[#161615] rounded-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] p-8">
+            <x-card class="p-8">
                 @yield('content')
-            </div>
+            </x-card>
 
             <!-- Footer Links -->
-            <div class="text-center mt-6">
+            <div class="text-center">
                 @yield('footer')
             </div>
         </div>

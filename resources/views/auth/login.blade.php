@@ -1,17 +1,16 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
 @section('subtitle', 'Sign in to your account')
 
-@section('content')
-    @livewire('auth.login')
-@endsection
-
 @section('footer')
-    <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">
+    <p class="text-sm text-gray-600 dark:text-gray-400">
         Don't have an account? 
-        <a href="{{ route('register') }}" class="text-[#f53003] dark:text-[#FF4433] hover:underline font-medium">
+        <a href="{{ route('register') }}" class="font-medium text-primary hover:text-primary-dark">
             Sign up
         </a>
     </p>
+@endsection
+
+@section('content')
+    @livewire('auth.login')
 @endsection 

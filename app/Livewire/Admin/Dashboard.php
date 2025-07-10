@@ -4,22 +4,40 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
     public function render()
     {
-        $stats = [
-            'total_users' => User::count(),
-            'new_users_this_month' => User::where('created_at', '>=', now()->startOfMonth())->count(),
-            'active_users' => User::where('created_at', '>=', now()->subDays(30))->count(),
+        $totalUsers = User::count();
+        $activeSessions = DB::table('sessions')->count();
+        $systemLoad = rand(20, 80); // Mock system load
+        
+        $recentActivity = [
+            [
+                'message' => 'New user registered: john@example.com',
+                'time' => '2 minutes ago'
+            ],
+            [
+                'message' => 'System backup completed successfully',
+                'time' => '15 minutes ago'
+            ],
+            [
+                'message' => 'Database optimization completed',
+                'time' => '1 hour ago'
+            ],
+            [
+                'message' => 'Security update installed',
+                'time' => '2 hours ago'
+            ]
         ];
 
-        $recent_users = User::latest()->take(5)->get();
-
         return view('livewire.admin.dashboard', [
-            'stats' => $stats,
-            'recent_users' => $recent_users,
+            'totalUsers' => $totalUsers,
+            'activeSessions' => $activeSessions,
+            'systemLoad' => $systemLoad,
+            'recentActivity' => $recentActivity
         ]);
     }
 } 
