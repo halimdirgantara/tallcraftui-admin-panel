@@ -6,8 +6,25 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
+            refresh: [
+                'resources/views/**/*.blade.php',
+                'app/Livewire/**/*.php',
+                'routes/**/*.php',
+            ],
         }),
         tailwindcss(),
     ],
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+        watch: {
+            ignored: [
+                '**/node_modules/**',
+                '**/storage/**',
+                '**/bootstrap/cache/**',
+                '**/vendor/**',
+            ],
+        },
+    },
 });
