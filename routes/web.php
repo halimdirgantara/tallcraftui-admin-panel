@@ -40,9 +40,51 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
+    
+    // User Management - Livewire Components
     Route::get('/users', function () {
-        return view('admin.users');
-    })->name('users');
+        return view('admin.users.index');
+    })->name('users.index');
+    
+    Route::get('/users/create', function () {
+        return view('admin.users.create');
+    })->name('users.create');
+    
+    Route::get('/users/{user}', function (App\Models\User $user) {
+        return view('admin.users.show', compact('user'));
+    })->name('users.show');
+    
+    Route::get('/users/{user}/edit', function (App\Models\User $user) {
+        return view('admin.users.edit', compact('user'));
+    })->name('users.edit');
+    
+    Route::put('/users/{user}', function (App\Models\User $user) {
+        // This route will be handled by Livewire component
+        return redirect()->back();
+    })->name('users.update');
+    
+    // Role Management - Livewire Components
+    Route::get('/roles', function () {
+        return view('admin.roles.index');
+    })->name('roles.index');
+    
+    Route::get('/roles/create', function () {
+        return view('admin.roles.create');
+    })->name('roles.create');
+    
+    Route::get('/roles/{role}', function (Spatie\Permission\Models\Role $role) {
+        return view('admin.roles.show', compact('role'));
+    })->name('roles.show');
+    
+    Route::get('/roles/{role}/edit', function (Spatie\Permission\Models\Role $role) {
+        return view('admin.roles.edit', compact('role'));
+    })->name('roles.edit');
+    
+    Route::put('/roles/{role}', function (Spatie\Permission\Models\Role $role) {
+        // This route will be handled by Livewire component
+        return redirect()->back();
+    })->name('roles.update');
+    
     Route::get('/settings', function () {
         return view('admin.settings');
     })->name('settings');

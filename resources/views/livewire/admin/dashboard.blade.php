@@ -2,7 +2,7 @@
     <div class="space-y-6">
         <!-- Welcome Section -->
         <x-card>
-            <div class="text-center">
+            <div class="text-center p-4">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                     Welcome back, {{ auth()->user()->name }}!
                 </h2>
@@ -41,10 +41,10 @@
 
         <!-- Quick Actions -->
         <x-card>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 class="text-lg font-semibold p-4 text-gray-900 dark:text-white mb-4">
                 Quick Actions
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 p-4 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <x-button variant="outline" class="w-full">
                     <x-icon name="user-plus" class="w-4 h-4 mr-2" />
                     Add User
@@ -69,7 +69,7 @@
 
         <!-- Recent Activity -->
         <x-card>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 class="text-lg font-semibold p-4 text-gray-900 dark:text-white mb-4">
                 Recent Activity
             </h3>
             <div class="space-y-4">

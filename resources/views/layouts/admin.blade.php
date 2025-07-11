@@ -39,15 +39,40 @@
                         Dashboard
                     </x-menu-item>
                     
-                    <x-menu-item href="{{ route('admin.users') }}" :active="request()->routeIs('admin.users')">
+                    <!-- User Management Group -->
+                    <div class="px-3 py-2">
+                        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            User Management
+                        </h3>
+                    </div>
+                    
+                    @can('view users')
+                    <x-menu-item href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')">
                         <x-icon name="users" class="w-5 h-5 mr-3" />
                         Users
                     </x-menu-item>
+                    @endcan
                     
+                    @can('view roles')
+                    <x-menu-item href="{{ route('admin.roles.index') }}" :active="request()->routeIs('admin.roles.*')">
+                        <x-icon name="shield-check" class="w-5 h-5 mr-3" />
+                        Roles
+                    </x-menu-item>
+                    @endcan
+                    
+                    <!-- System Group -->
+                    <div class="px-3 py-2 mt-4">
+                        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            System
+                        </h3>
+                    </div>
+                    
+                    @can('view settings')
                     <x-menu-item href="{{ route('admin.settings') }}" :active="request()->routeIs('admin.settings')">
                         <x-icon name="cog-6-tooth" class="w-5 h-5 mr-3" />
                         Settings
                     </x-menu-item>
+                    @endcan
                 </x-menu>
             </nav>
         </div>
