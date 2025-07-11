@@ -25,7 +25,7 @@
             <x-stat 
                 title="Active Sessions"
                 value="{{ $activeSessions }}"
-                icon="truck"
+                icon="chart-bar"
                 trend="+5%"
                 trend-up
             />
@@ -33,7 +33,7 @@
             <x-stat 
                 title="System Load"
                 value="{{ $systemLoad }}%"
-                icon="truck"
+                icon="cpu-chip"
                 trend="-2%"
                 trend-down
             />
@@ -56,12 +56,12 @@
                 </x-button>
                 
                 <x-button variant="outline" class="w-full">
-                    <x-icon name="view-columns" class="w-4 h-4 mr-2" />
+                    <x-icon name="chart-bar-square" class="w-4 h-4 mr-2" />
                     Reports
                 </x-button>
                 
                 <x-button variant="outline" class="w-full">
-                    <x-icon name="view-columns" class="w-4 h-4 mr-2" />
+                    <x-icon name="question-mark-circle" class="w-4 h-4 mr-2" />
                     Help
                 </x-button>
             </div>

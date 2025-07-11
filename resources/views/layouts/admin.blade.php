@@ -38,7 +38,7 @@
                     </x-menu-item>
                     
                     <x-menu-item href="{{ route('admin.settings') }}" :active="request()->routeIs('admin.settings')">
-                        <x-icon name="settings" class="w-5 h-5 mr-3" />
+                        <x-icon name="cog-6-tooth" class="w-5 h-5 mr-3" />
                         Settings
                     </x-menu-item>
                 </x-menu>
@@ -52,7 +52,7 @@
                 <div class="flex items-center justify-between h-16 px-6">
                     <div class="flex items-center">
                         <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <x-icon name="menu" class="w-6 h-6" />
+                            <x-icon name="bars-3" class="w-6 h-6" />
                         </button>
                     </div>
                     
@@ -64,7 +64,7 @@
                         
                         <!-- User Menu -->
                         <x-dropdown>
-                            <x-dropdown.trigger>
+                            @slot('trigger')
                                 <div class="flex items-center space-x-3">
                                     <x-avatar>
                                         {{ auth()->user()->name[0] ?? 'U' }}
@@ -74,30 +74,17 @@
                                     </span>
                                     <x-icon name="chevron-down" class="w-4 h-4" />
                                 </div>
-                            </x-dropdown.trigger>
-                            
-                            <x-dropdown.content>
-                                <x-dropdown.item href="{{ route('profile.edit') }}">
-                                    <x-icon name="user" class="w-4 h-4 mr-2" />
-                                    Profile
-                                </x-dropdown.item>
-                                
-                                <x-dropdown.item href="{{ route('admin.settings') }}">
-                                    <x-icon name="settings" class="w-4 h-4 mr-2" />
-                                    Settings
-                                </x-dropdown.item>
-                                
-                                <x-dropdown.separator />
-                                
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <x-dropdown.item href="{{ route('logout') }}" 
-                                        onclick="event.preventDefault(); this.closest('form').submit();">
-                                        <x-icon name="log-out" class="w-4 h-4 mr-2" />
-                                        Logout
-                                    </x-dropdown.item>
-                                </form>
-                            </x-dropdown.content>
+                            @endslot
+
+                            <x-dropdown-item label="Profile" icon="user" link="{{ route('profile.edit') }}" />
+                            <x-dropdown-item label="Update password" icon="key" />
+                            <x-dropdown-item label="Settings" icon="cog-6-tooth" link="{{ route('admin.settings') }}" />
+                            <x-separator />
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <x-dropdown-item label="Logout" icon="arrow-right-start-on-rectangle" link="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); this.closest('form').submit();" />
+                            </form>
                         </x-dropdown>
                     </div>
                 </div>
@@ -107,10 +94,10 @@
             <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
                 <div class="py-6">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        @if (isset($header))
+                        @hasSection('header')
                             <div class="mb-6">
                                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {{ $header }}
+                                    @yield('header')
                                 </h1>
                             </div>
                         @endif
