@@ -17,12 +17,19 @@
 </head>
 <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
     <div class="min-h-screen flex">
+        <!-- Mobile sidebar backdrop -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 lg:hidden hidden" onclick="toggleSidebar()"></div>
+        
         <!-- Sidebar -->
-        <div class="w-64 bg-white dark:bg-gray-800 shadow-lg">
-            <div class="flex items-center justify-center h-16 px-6 border-b border-gray-200 dark:border-gray-700">
+        <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">
                     {{ config('app.name', 'Laravel') }}
                 </h1>
+                <!-- Close button for mobile -->
+                <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" onclick="toggleSidebar()">
+                    <x-icon name="x-mark" class="w-6 h-6" />
+                </button>
             </div>
             
             <nav class="mt-6 px-3">
@@ -46,30 +53,30 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col lg:ml-0">
             <!-- Top Navigation -->
             <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between h-16 px-6">
                     <div class="flex items-center">
-                        <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" onclick="toggleSidebar()">
                             <x-icon name="bars-3" class="w-6 h-6" />
                         </button>
                     </div>
                     
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 sm:space-x-4">
                         <!-- Notifications -->
                         <button class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
-                            <x-icon name="bell" class="w-6 h-6" />
+                            <x-icon name="bell" class="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
                         
                         <!-- User Menu -->
                         <x-dropdown>
                             @slot('trigger')
-                                <div class="flex items-center space-x-3">
+                                <div class="flex items-center space-x-2 sm:space-x-3">
                                     <x-avatar>
                                         {{ auth()->user()->name[0] ?? 'U' }}
                                     </x-avatar>
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                    <span class="hidden sm:block text-sm font-medium text-gray-900 dark:text-white">
                                         {{ auth()->user()->name }}
                                     </span>
                                     <x-icon name="chevron-down" class="w-4 h-4" />
@@ -92,11 +99,11 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
-                <div class="py-6">
+                <div class="py-4 sm:py-6">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         @hasSection('header')
-                            <div class="mb-6">
-                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <div class="mb-4 sm:mb-6">
+                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                     @yield('header')
                                 </h1>
                             </div>
@@ -110,5 +117,36 @@
     </div>
 
     @livewireScripts
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                // Open sidebar
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Close sidebar
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close sidebar when clicking on menu items on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('[href]');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth < 1024) { // lg breakpoint
+                        toggleSidebar();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html> 

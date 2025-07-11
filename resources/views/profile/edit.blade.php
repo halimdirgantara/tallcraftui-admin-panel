@@ -28,7 +28,7 @@
             </div>
             
             <div class="flex justify-end">
-                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md">
+                <button type="submit" class="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md">
                     Update Profile
                 </button>
             </div>
@@ -65,7 +65,7 @@
             </div>
             
             <div class="flex justify-end">
-                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md">
+                <button type="submit" class="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md">
                     Change Password
                 </button>
             </div>
