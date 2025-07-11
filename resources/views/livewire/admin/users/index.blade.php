@@ -22,7 +22,7 @@
 
         <!-- Search and Filters -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Search Users
@@ -65,7 +65,8 @@
 
         <!-- Users Table -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <div class="overflow-x-auto">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
@@ -162,6 +163,83 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Mobile Card View -->
+            <div class="md:hidden">
+                @forelse($users as $user)
+                <div class="border-b border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <x-avatar class="w-10 h-10">
+                                {{ $user->name[0] ?? 'U' }}
+                            </x-avatar>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $user->name }}
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $user->email }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            @can('view users')
+                            <a href="{{ route('admin.users.show', $user) }}" 
+                               class="text-primary hover:text-primary-dark p-1">
+                                <x-icon name="eye" class="w-4 h-4" />
+                            </a>
+                            @endcan
+                            
+                            @can('edit users')
+                            <a href="{{ route('admin.users.edit', $user) }}" 
+                               class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1">
+                                <x-icon name="pencil-square" class="w-4 h-4" />
+                            </a>
+                            @endcan
+                            
+                            @can('delete users')
+                            @if($user->id !== auth()->id())
+                            <button wire:click="deleteUser({{ $user->id }})" 
+                                    wire:confirm="Are you sure you want to delete this user?"
+                                    class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-1">
+                                <x-icon name="trash" class="w-4 h-4" />
+                            </button>
+                            @endif
+                            @endcan
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                            <x-icon name="calendar" class="w-4 h-4 mr-2" />
+                            Created: {{ $user->created_at->format('M d, Y') }}
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Roles:</div>
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($user->roles as $role)
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    {{ $role->name }}
+                                </span>
+                                @endforeach
+                                @if($user->roles->isEmpty())
+                                <span class="text-sm text-gray-500 dark:text-gray-400">No roles assigned</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+                    <div class="flex flex-col items-center">
+                        <x-icon name="users" class="w-12 h-12 text-gray-400 mb-4" />
+                        <p class="text-lg font-medium">No users found</p>
+                        <p class="text-sm">Try adjusting your search or filter criteria.</p>
+                    </div>
+                </div>
+                @endforelse
             </div>
             
             <!-- Pagination -->
