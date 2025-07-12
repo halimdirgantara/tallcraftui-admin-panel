@@ -20,9 +20,26 @@ class Notifications extends Component
     public function notificationReceived($notification = null)
     {
         $user = Auth::user();
-        $this->notifications = $user->notifications()->latest()->limit(10)->get();
+        $this->notifications = $user->unreadNotifications()->latest()->limit(10)->get();
         $this->unreadCount = $user->unreadNotifications()->count();
         $this->dispatch('notifications-updated');
+    }
+
+    public function markAsRead($notificationId)
+    {
+        $user = Auth::user();
+        $notification = $user->unreadNotifications()->find($notificationId);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        $this->notificationReceived();
+    }
+
+    public function clearAll()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+        $this->notificationReceived();
     }
 
     public function render()
