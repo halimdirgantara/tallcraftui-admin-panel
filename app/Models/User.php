@@ -61,4 +61,9 @@ class User extends Authenticatable
             ->setDescriptionForEvent(fn(string $eventName) => "User {$eventName}")
             ->useLogName('user');
     }
+
+    public function notificationSettings()
+    {
+        return $this->hasOne(UserNotificationSetting::class);
+    }
 }

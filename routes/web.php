@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\User\NotificationSettings;
+use App\Livewire\User\Notifications;
 
 Route::get('/', function () {
     return view('welcome');
@@ -131,3 +133,8 @@ Route::post('/logout', function () {
     
     return redirect('/login');
 })->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/notification-settings', NotificationSettings::class)->name('user.notification-settings');
+    Route::get('/user/notifications', Notifications::class)->name('user.notifications');
+});
