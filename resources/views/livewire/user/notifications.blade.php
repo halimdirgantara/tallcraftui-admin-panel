@@ -1,12 +1,22 @@
-<div class="relative">
+<div x-data="{ open: false }" x-init="
+    if (window.Laravel && window.Laravel.userId) {
+        window.Echo.private('App.Models.User.' + window.Laravel.userId)
+            .notification((notification) => {
+                window.Livewire && window.Livewire.emit('notificationReceived', notification);
+            });
+    }
+    $wire.on('notifications-updated', () => {
+        // Optionally, you can add a sound or animation here
+    });
+">
     <button @click="open = !open" class="relative focus:outline-none">
-        <x-icon name="bell" class="w-6 h-6" />
+        <x-icon name="bell" class="w-5 h-5 sm:w-6 sm:h-6  dark:text-white" />
         @if($unreadCount > 0)
             <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
         @endif
     </button>
     <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50">
-        <div class="p-4 border-b font-semibold">Notifications</div>
+        <div class="p-4 border-b font-semibold dark:text-white">Notifications</div>
         <ul class="max-h-64 overflow-y-auto">
             @forelse($notifications as $notification)
                 <li class="p-4 border-b last:border-b-0 {{ $notification->read_at ? '' : 'bg-blue-50 dark:bg-blue-900' }}">
