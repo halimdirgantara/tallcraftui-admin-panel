@@ -1,14 +1,35 @@
-<div x-data="{ open: false }" x-init="
-    if (window.Laravel && window.Laravel.userId) {
-        window.Echo.private('App.Models.User.' + window.Laravel.userId)
-            .notification((notification) => {
-                window.Livewire && window.Livewire.emit('notificationReceived', notification);
-            });
-    }
-    $wire.on('notifications-updated', () => {
-        // Optionally, you can add a sound or animation here
-    });
-">
+<div 
+    x-data="{ open: false }" 
+    x-init="
+        if (window.Laravel && window.Laravel.userId) {
+            window.Echo.private('App.Models.User.' + window.Laravel.userId)
+                .notification((notification) => {
+                    $wire.notificationReceived(notification);
+
+                    if (window.Notification && Notification.permission === 'granted') {
+                        new Notification('New Notification', {
+                            body: notification.message,
+                            icon: '/favicon.ico'
+                        });
+                    } else if (window.Notification && Notification.permission !== 'denied') {
+                        Notification.requestPermission().then((permission) => {
+                            if (permission === 'granted') {
+                                new Notification('New Notification', {
+                                    body: notification.message,
+                                    icon: '/favicon.ico'
+                                });
+                            }
+                        });
+                    }
+                });
+        }
+
+        $wire.on('notifications-updated', () => {
+            // Optional: Add animation or sound
+        });
+    "
+>
+
     <button @click="open = !open" class="relative focus:outline-none">
         <x-icon name="bell" class="w-5 h-5 sm:w-6 sm:h-6  dark:text-white" />
         @if($unreadCount > 0)

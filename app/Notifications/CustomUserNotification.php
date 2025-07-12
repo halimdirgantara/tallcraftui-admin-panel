@@ -23,7 +23,10 @@ class CustomUserNotification extends Notification
     {
         $channels = [];
         $settings = $notifiable->notificationSettings;
-        if ($settings && $settings->via_app) $channels[] = 'database';
+        if ($settings && $settings->via_app) {
+            $channels[] = 'database';
+            $channels[] = 'broadcast'; // Add broadcast for push notifications
+        }
         if ($settings && $settings->via_email) $channels[] = 'mail';
         if ($settings && $settings->via_telegram) $channels[] = 'telegram';
         if ($settings && $settings->via_whatsapp) $channels[] = 'whatsapp'; // custom channel
@@ -38,6 +41,20 @@ class CustomUserNotification extends Notification
     }
 
     public function toDatabase($notifiable)
+    {
+        return [
+            'message' => $this->message,
+        ];
+    }
+
+    public function toBroadcast($notifiable)
+    {
+        return [
+            'message' => $this->message,
+        ];
+    }
+
+    public function toArray($notifiable)
     {
         return [
             'message' => $this->message,

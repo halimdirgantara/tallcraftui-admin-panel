@@ -135,6 +135,5 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/user/notification-settings', NotificationSettings::class)->name('user.notification-settings');
     Route::get('/user/notifications', Notifications::class)->name('user.notifications');
 });

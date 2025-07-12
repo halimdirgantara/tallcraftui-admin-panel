@@ -10,14 +10,14 @@ class Notifications extends Component
     public $notifications = [];
     public $unreadCount = 0;
 
-    protected $listeners = ['notificationReceived' => 'refreshNotifications'];
+    protected $listeners = ['notificationReceived' => 'notificationReceived'];
 
     public function mount()
     {
-        $this->refreshNotifications();
+        $this->notificationReceived();
     }
 
-    public function refreshNotifications($notification = null)
+    public function notificationReceived($notification = null)
     {
         $user = Auth::user();
         $this->notifications = $user->notifications()->latest()->limit(10)->get();
