@@ -5,15 +5,14 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use GeoSot\EnvEditor\Facades\EnvEditor;
 
 class Settings extends Component
 {
     public $activeTab = 'general';
     public $appName = '';
-    public $appDescription = '';
     public $appUrl = '';
     public $appEmail = '';
-    public $appPhone = '';
     public $appAddress = '';
     public $timezone = '';
     public $locale = '';
@@ -31,11 +30,8 @@ class Settings extends Component
 
     protected $rules = [
         'appName' => 'required|string|max:255',
-        'appDescription' => 'nullable|string|max:500',
         'appUrl' => 'required|url',
-        'appEmail' => 'required|email',
-        'appPhone' => 'nullable|string|max:20',
-        'appAddress' => 'nullable|string|max:500',
+        'appEmail' => 'required|string',
         'timezone' => 'required|string',
         'locale' => 'required|string',
         'maintenanceMode' => 'boolean',
@@ -58,52 +54,47 @@ class Settings extends Component
 
     public function loadSettings()
     {
-        // Load settings from config or database
-        $this->appName = config('app.name', 'TallCraftUI Admin Panel');
-        $this->appDescription = config('app.description', 'A modern admin panel built with Laravel and TallCraftUI');
-        $this->appUrl = config('app.url', url('/'));
-        $this->appEmail = config('mail.from.address', 'admin@example.com');
-        $this->appPhone = config('app.phone', '');
-        $this->appAddress = config('app.address', '');
-        $this->timezone = config('app.timezone', 'UTC');
-        $this->locale = config('app.locale', 'en');
+        // Load settings from .env file using env-editor
+        $this->appName = EnvEditor::getKey('APP_NAME', 'TallCraftUI Admin Panel');
+        $this->appUrl = EnvEditor::getKey('APP_URL', url('/'));
+        $this->appEmail = EnvEditor::getKey('MAIL_FROM_ADDRESS', 'admin@example.com');
+        $this->timezone = EnvEditor::getKey('APP_TIMEZONE', 'UTC');
+        $this->locale = EnvEditor::getKey('APP_LOCALE', 'en');
         $this->maintenanceMode = app()->isDownForMaintenance();
-        $this->debugMode = config('app.debug', false);
-        $this->registrationEnabled = config('auth.registration_enabled', true);
-        $this->emailVerification = config('auth.email_verification', true);
-        $this->twoFactorAuth = config('auth.two_factor', false);
-        $this->sessionTimeout = config('session.lifetime', 120);
-        $this->maxLoginAttempts = config('auth.max_attempts', 5);
-        $this->passwordMinLength = config('auth.password_min_length', 8);
-        $this->passwordRequireSpecial = config('auth.password_require_special', true);
-        $this->passwordRequireNumbers = config('auth.password_require_numbers', true);
-        $this->passwordRequireUppercase = config('auth.password_require_uppercase', true);
+        $this->debugMode = EnvEditor::getKey('APP_DEBUG', 'false') === 'true';
+        $this->registrationEnabled = EnvEditor::getKey('AUTH_REGISTRATION_ENABLED', 'true') === 'true';
+        $this->emailVerification = EnvEditor::getKey('AUTH_EMAIL_VERIFICATION', 'true') === 'true';
+        $this->twoFactorAuth = EnvEditor::getKey('AUTH_TWO_FACTOR', 'false') === 'true';
+        $this->sessionTimeout = (int) EnvEditor::getKey('SESSION_LIFETIME', '120');
+        $this->maxLoginAttempts = (int) EnvEditor::getKey('AUTH_MAX_ATTEMPTS', '5');
+        $this->passwordMinLength = (int) EnvEditor::getKey('AUTH_PASSWORD_MIN_LENGTH', '8');
+        $this->passwordRequireSpecial = EnvEditor::getKey('AUTH_PASSWORD_REQUIRE_SPECIAL', 'true') === 'true';
+        $this->passwordRequireNumbers = EnvEditor::getKey('AUTH_PASSWORD_REQUIRE_NUMBERS', 'true') === 'true';
+        $this->passwordRequireUppercase = EnvEditor::getKey('AUTH_PASSWORD_REQUIRE_UPPERCASE', 'true') === 'true';
     }
 
     public function saveGeneralSettings()
     {
         $this->validate([
             'appName' => 'required|string|max:255',
-            'appDescription' => 'nullable|string|max:500',
             'appUrl' => 'required|url',
-            'appEmail' => 'required|email',
-            'appPhone' => 'nullable|string|max:20',
-            'appAddress' => 'nullable|string|max:500',
+            'appEmail' => 'required|string',
             'timezone' => 'required|string',
             'locale' => 'required|string',
         ]);
 
-        // Save general settings
-        Cache::put('app.name', $this->appName, 86400);
-        Cache::put('app.description', $this->appDescription, 86400);
-        Cache::put('app.url', $this->appUrl, 86400);
-        Cache::put('app.email', $this->appEmail, 86400);
-        Cache::put('app.phone', $this->appPhone, 86400);
-        Cache::put('app.address', $this->appAddress, 86400);
-        Cache::put('app.timezone', $this->timezone, 86400);
-        Cache::put('app.locale', $this->locale, 86400);
+        try {
+            // Save settings to .env file
+            EnvEditor::editKey('APP_NAME', $this->appName);
+            EnvEditor::editKey('APP_URL', $this->appUrl);
+            EnvEditor::editKey('MAIL_FROM_ADDRESS', $this->appEmail);
+            EnvEditor::editKey('APP_TIMEZONE', $this->timezone);
+            EnvEditor::editKey('APP_LOCALE', $this->locale);
 
-        session()->flash('success', 'General settings updated successfully.');
+            session()->flash('success', 'General settings updated successfully in .env file.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to update .env file: ' . $e->getMessage());
+        }
     }
 
     public function saveSecuritySettings()
@@ -122,26 +113,50 @@ class Settings extends Component
             'passwordRequireUppercase' => 'boolean',
         ]);
 
-        // Save security settings
-        Cache::put('app.maintenance_mode', $this->maintenanceMode, 86400);
-        Cache::put('app.debug_mode', $this->debugMode, 86400);
-        Cache::put('auth.registration_enabled', $this->registrationEnabled, 86400);
-        Cache::put('auth.email_verification', $this->emailVerification, 86400);
-        Cache::put('auth.two_factor', $this->twoFactorAuth, 86400);
-        Cache::put('session.lifetime', $this->sessionTimeout, 86400);
-        Cache::put('auth.max_attempts', $this->maxLoginAttempts, 86400);
-        Cache::put('auth.password_min_length', $this->passwordMinLength, 86400);
-        Cache::put('auth.password_require_special', $this->passwordRequireSpecial, 86400);
-        Cache::put('auth.password_require_numbers', $this->passwordRequireNumbers, 86400);
-        Cache::put('auth.password_require_uppercase', $this->passwordRequireUppercase, 86400);
+        try {
+            // Save security settings to .env file
+            EnvEditor::editKey('APP_DEBUG', $this->debugMode ? 'true' : 'false');
+            EnvEditor::editKey('AUTH_REGISTRATION_ENABLED', $this->registrationEnabled ? 'true' : 'false');
+            EnvEditor::editKey('AUTH_EMAIL_VERIFICATION', $this->emailVerification ? 'true' : 'false');
+            EnvEditor::editKey('AUTH_TWO_FACTOR', $this->twoFactorAuth ? 'true' : 'false');
+            EnvEditor::editKey('SESSION_LIFETIME', (string) $this->sessionTimeout);
+            EnvEditor::editKey('AUTH_MAX_ATTEMPTS', (string) $this->maxLoginAttempts);
+            EnvEditor::editKey('AUTH_PASSWORD_MIN_LENGTH', (string) $this->passwordMinLength);
+            EnvEditor::editKey('AUTH_PASSWORD_REQUIRE_SPECIAL', $this->passwordRequireSpecial ? 'true' : 'false');
+            EnvEditor::editKey('AUTH_PASSWORD_REQUIRE_NUMBERS', $this->passwordRequireNumbers ? 'true' : 'false');
+            EnvEditor::editKey('AUTH_PASSWORD_REQUIRE_UPPERCASE', $this->passwordRequireUppercase ? 'true' : 'false');
 
-        session()->flash('success', 'Security settings updated successfully.');
+            session()->flash('success', 'Security settings updated successfully in .env file.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to update .env file: ' . $e->getMessage());
+        }
+    }
+
+    public function toggleMaintenanceMode()
+    {
+        try {
+            if ($this->maintenanceMode) {
+                // Enable maintenance mode
+                EnvEditor::editKey('APP_MAINTENANCE_MODE', 'true');
+                session()->flash('success', 'Maintenance mode enabled.');
+            } else {
+                // Disable maintenance mode
+                EnvEditor::editKey('APP_MAINTENANCE_MODE', 'false');
+                session()->flash('success', 'Maintenance mode disabled.');
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to update maintenance mode: ' . $e->getMessage());
+        }
     }
 
     public function clearCache()
     {
-        Cache::flush();
-        session()->flash('success', 'Application cache cleared successfully.');
+        try {
+            Cache::flush();
+            session()->flash('success', 'Application cache cleared successfully.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to clear cache: ' . $e->getMessage());
+        }
     }
 
     public function render()

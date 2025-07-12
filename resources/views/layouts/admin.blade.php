@@ -24,7 +24,7 @@
         <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0 transition-transform duration-300 ease-in-out">
             <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name') }}
                 </h1>
                 <!-- Close button for mobile -->
                 <button class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" onclick="toggleSidebar()">

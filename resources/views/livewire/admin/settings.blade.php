@@ -71,23 +71,11 @@
                                 </div>
                             </div>
                             
-                            <div>
-                                <x-input 
-                                    label="Application Description" 
-                                    wire:model="appDescription"
-                                    placeholder="Enter application description"
-                                />
-                                @error('appDescription')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input 
                                         label="Contact Email" 
                                         wire:model="appEmail"
-                                        type="email"
                                         placeholder="admin@example.com"
                                         required 
                                     />
@@ -95,29 +83,9 @@
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                
-                                <div>
-                                    <x-input 
-                                        label="Contact Phone" 
-                                        wire:model="appPhone"
-                                        placeholder="+1 (555) 123-4567"
-                                    />
-                                    @error('appPhone')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
+
                             </div>
                             
-                            <div>
-                                <x-input 
-                                    label="Address" 
-                                    wire:model="appAddress"
-                                    placeholder="Enter business address"
-                                />
-                                @error('appAddress')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -295,6 +263,7 @@
                                     <x-checkbox 
                                         label="Maintenance Mode" 
                                         wire:model="maintenanceMode"
+                                        wire:change="toggleMaintenanceMode"
                                     />
                                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                         Put the application in maintenance mode
@@ -334,6 +303,24 @@
                                         <x-icon name="trash" class="w-4 h-4 mr-2" />
                                         Clear Application Cache
                                     </x-button>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-4">Environment File</h4>
+                                
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                    <div class="flex">
+                                        <x-icon name="information-circle" class="w-5 h-5 text-blue-400 mr-3 mt-0.5" />
+                                        <div>
+                                            <h5 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                                .env File Management
+                                            </h5>
+                                            <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                                                Settings are now saved directly to your .env file using the env-editor package. Changes will persist across application restarts.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
