@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class Create extends Component
 {
@@ -35,6 +36,16 @@ class Create extends Component
         if (!empty($this->selectedRoles)) {
             $user->assignRole($this->selectedRoles);
         }
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($user)
+            ->withProperties([
+                'roles' => $this->selectedRoles,
+                'created_by' => Auth::user()->id,
+            ])
+            ->log('User created');
 
         session()->flash('success', 'User created successfully.');
         return redirect()->route('admin.users.index');

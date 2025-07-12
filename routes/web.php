@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Admin Routes
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'log.user.activity'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -88,6 +88,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/settings', function () {
         return view('admin.settings');
     })->name('settings');
+    
+    // Activity Log - Livewire Component
+    Route::get('/activity-log', function () {
+        return view('admin.activity-log');
+    })->name('activity-log');
 });
 
 // Profile Routes
@@ -114,6 +119,15 @@ Route::middleware('auth')->group(function () {
 
 // Logout Route
 Route::post('/logout', function () {
+    $user = auth()->user();
+    $request = request();
+    
     auth()->logout();
+    
+    // Dispatch logout event
+    if ($user) {
+        event(new \App\Events\UserLoggedOut($user, $request));
+    }
+    
     return redirect('/login');
 })->name('logout');

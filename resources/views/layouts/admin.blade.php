@@ -73,6 +73,13 @@
                         Settings
                     </x-menu-item>
                     @endcan
+                    
+                    @can('view activity logs')
+                    <x-menu-item href="{{ route('admin.activity-log') }}" :active="request()->routeIs('admin.activity-log')">
+                        <x-icon name="document-text" class="w-5 h-5 mr-3" />
+                        Activity Log
+                    </x-menu-item>
+                    @endcan
                 </x-menu>
             </nav>
         </div>

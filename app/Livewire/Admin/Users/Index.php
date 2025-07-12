@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -40,7 +41,25 @@ class Index extends Component
             return;
         }
 
+        // Store user data for logging before deletion
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->roles->pluck('name')->toArray(),
+        ];
+
         $user->delete();
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties([
+                'deleted_user' => $userData,
+                'deleted_by' => Auth::user()->id,
+            ])
+            ->log('User deleted');
+
         session()->flash('success', 'User deleted successfully.');
     }
 

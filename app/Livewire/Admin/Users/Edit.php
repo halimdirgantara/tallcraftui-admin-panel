@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class Edit extends Component
 {
@@ -40,6 +41,12 @@ class Edit extends Component
             'selectedRoles' => 'array',
         ]);
 
+        $oldData = [
+            'name' => $this->user->name,
+            'email' => $this->user->email,
+            'roles' => $this->user->roles->pluck('name')->toArray(),
+        ];
+
         $this->user->update([
             'name' => $this->name,
             'email' => $this->email,
@@ -51,6 +58,22 @@ class Edit extends Component
 
         // Sync roles
         $this->user->syncRoles($this->selectedRoles);
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($this->user)
+            ->withProperties([
+                'old_data' => $oldData,
+                'new_data' => [
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'roles' => $this->selectedRoles,
+                    'password_changed' => !empty($this->password),
+                ],
+                'updated_by' => Auth::user()->id,
+            ])
+            ->log('User updated');
 
         session()->flash('success', 'User updated successfully.');
         return redirect()->route('admin.users.index');

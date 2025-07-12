@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Roles;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Auth;
 
 class Create extends Component
 {
@@ -25,6 +26,16 @@ class Create extends Component
         if (!empty($this->selectedPermissions)) {
             $role->syncPermissions($this->selectedPermissions);
         }
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($role)
+            ->withProperties([
+                'permissions' => $this->selectedPermissions,
+                'created_by' => Auth::user()->id,
+            ])
+            ->log('Role created');
 
         session()->flash('success', 'Role created successfully.');
         return redirect()->route('admin.roles.index');

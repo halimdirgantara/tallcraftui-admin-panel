@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Roles;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -32,7 +33,24 @@ class Index extends Component
             return;
         }
 
+        // Store role data for logging before deletion
+        $roleData = [
+            'id' => $role->id,
+            'name' => $role->name,
+            'permissions' => $role->permissions->pluck('name')->toArray(),
+        ];
+
         $role->delete();
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties([
+                'deleted_role' => $roleData,
+                'deleted_by' => Auth::user()->id,
+            ])
+            ->log('Role deleted');
+
         session()->flash('success', 'Role deleted successfully.');
     }
 

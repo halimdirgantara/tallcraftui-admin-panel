@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Roles;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Auth;
 
 class Edit extends Component
 {
@@ -32,10 +33,29 @@ class Edit extends Component
             'selectedPermissions' => 'array',
         ]);
 
+        $oldData = [
+            'name' => $this->role->name,
+            'permissions' => $this->role->permissions->pluck('name')->toArray(),
+        ];
+
         $this->role->update(['name' => $this->name]);
 
         // Sync permissions
         $this->role->syncPermissions($this->selectedPermissions);
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($this->role)
+            ->withProperties([
+                'old_data' => $oldData,
+                'new_data' => [
+                    'name' => $this->name,
+                    'permissions' => $this->selectedPermissions,
+                ],
+                'updated_by' => Auth::user()->id,
+            ])
+            ->log('Role updated');
 
         session()->flash('success', 'Role updated successfully.');
         return redirect()->route('admin.roles.index');
